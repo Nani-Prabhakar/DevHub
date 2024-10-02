@@ -1,9 +1,10 @@
 const express=require('express')
 const app=express()
-app.use("/nani",(req,res)=>{
+app.get("/nani/a*c/:userID/:name",(req,res)=>{
+    console.log(req.params)
     res.send("i love u")
 })
-app.use("/",(req,res)=>{
+app.use("/*fly$/",(req,res)=>{
     res.send("i love ")
 })
 app.listen(7777)
