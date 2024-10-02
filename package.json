@@ -1,0 +1,26 @@
+{
+  "name": "devhub-backend",
+  "version": "1.0.0",
+  "description": "platform to devs to hangout",
+  "main": "index.js",
+  "scripts": {
+    "start":"node src/app.js",
+    "dev":"nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "devhub-backend"
+  },
+  "keywords": [
+    "nodejs",
+    "expressjs",
+    "javascript",
+    "react",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
