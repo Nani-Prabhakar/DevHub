@@ -1,7 +1,9 @@
 const express=require('express')
+
 const app=express()
-app.get("/nani/a*c/:userID/:name",(req,res)=>{
-    console.log(req.params)
+const {userAuth}=require("../middlewares/auth")
+app.get("/user/data",userAuth,(req,res)=>{
+    //console.log(req.params)
     res.send("i love u")
 })
 app.use("/*fly$/",(req,res)=>{
