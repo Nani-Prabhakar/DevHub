@@ -1,12 +1,27 @@
 const express=require('express')
-
+const connectDB=require('./config/database')
+const User=require('./models/userModel')
 const app=express()
-const {userAuth}=require("../middlewares/auth")
-app.get("/user/data",userAuth,(req,res)=>{
-    //console.log(req.params)
-    res.send("i love u")
+connectDB().then(()=>{
+    console.log("database connected successfully!!")
+}).catch(err=>{
+    console.log("database cannot be connected")
 })
-app.use("/*fly$/",(req,res)=>{
-    res.send("i love ")
+app.post("/signup",async (req,res)=>{
+    const user =new User({
+        firstName:"Nani",
+        lastName:"Prabhakar",
+        emailId:"nani@gmail.com",
+        password:"nani@1079"
+    });
+    try{
+        await user.save();
+    }catch(err){
+        console.log("error in creating user:",err.message)
+    }
+    
+    res.send("user created successfully")
 })
-app.listen(7777)
+app.listen(7777,()=>{
+    console.log("server listening at port 7777")
+})

@@ -1,5 +1,5 @@
 const userAuth=(req,res,next)=>{
-    const token="xyz";
+    const token="xyzb";
     if(token==="xyz"){
         console.log("user authorized successfully");
         next();
