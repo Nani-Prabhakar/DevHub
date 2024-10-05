@@ -7,13 +7,12 @@ connectDB().then(()=>{
 }).catch(err=>{
     console.log("database cannot be connected")
 })
+app.use(express.json())
+
+
 app.post("/signup",async (req,res)=>{
-    const user =new User({
-        firstName:"Nani",
-        lastName:"Prabhakar",
-        emailId:"nani@gmail.com",
-        password:"nani@1079"
-    });
+    const data=req.body;
+    const user =new User(data);
     try{
         await user.save();
     }catch(err){
