@@ -33,7 +33,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['Male', 'Female', 'Other'],
         required: true,
+    },
+    skills:{
+        type:[],
+        
     }
+
 }, {
     timestamps: true
 });

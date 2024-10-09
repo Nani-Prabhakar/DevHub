@@ -26,30 +26,35 @@ app.post("/signup",async (req,res)=>{
     try{
         await user.save();
     }catch(err){
-      
+
         res.send("error in creating user:"+err.message)
     }
     
     res.send("user created successfully")
 })
-app.patch("/update",async (req,res)=>{
-  const id=req.body.id;
+app.patch("/update/:userId",async (req,res)=>{
+  const id=req.params.userId;
   const data=req.body;
-  const user=new User;
   try{
+    const valid_updates=["firstName","lastName","age","gender"]
+    const isValidUpdate=Object.keys(data).every((k)=>{
+      return valid_updates.includes(k)
+    })
+    if(!isValidUpdate){
+      throw new Error("update not allowed")
+    }
     const user=await User.findByIdAndUpdate({_id:id},  data, {
       returnDocument:"after",
       runValidators:true,
     });
-    //await doc.save();
-    console.log(user)
     res.send("data updated successfully")
   }catch(err){
-    console.log("error in creating user:",err.message)
+    res.send("Invalid Update:"+err.message)
   }
   
 
 })
+
 connectDB()
   .then(() => {
     console.log("Database connection established...");
