@@ -2,7 +2,7 @@ const express=require('express')
 const authRouter=express.Router();
 const User=require('../models/userModel')
 const bcrypt=require('bcrypt')
-const {validateData}=require('../utils/validateSigninData')
+const {validateSignInData}=require('../utils/validate')
 authRouter.post("/signup",async (req,res)=>{
     //validate signin data
     
@@ -46,6 +46,12 @@ authRouter.post("/login",async (req,res)=>{
      res.status(400).send("Error"+err.message);
    }
   
+})
+authRouter.post("/logout",async(req,res)=>{
+  res.cookie("token",null,{
+    expires:new Date(Date.now()),
+  })
+  res.send("logout successfull")
 })
   
 module.exports=authRouter;

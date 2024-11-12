@@ -38,6 +38,12 @@ const userSchema = new mongoose.Schema({
     skills:{
         type:[],
         
+    },
+    about:{
+        type:String,
+    },
+    photoURL:{
+        type:String,
     }
 
 }, {

@@ -19,7 +19,7 @@ const userAuth=async (req,res,next)=>{
         next();
 
     }catch(err){
-        res.stasend("Error:"+err.message);
+        res.send("Error:"+err.message);
     }
     
    
