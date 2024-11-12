@@ -2,59 +2,74 @@ const express=require('express')
 const connectDB=require('./config/database')
 const User=require('./models/userModel')
 const app=express()
-
+const {validateData}=require('./utils/validateSigninData')
+const bcrypt=require('bcrypt')
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
 app.use(express.json())
+app.use(cookieParser());
+const {userAuth}=require('./middlewares/auth')
 
-app.get("/user",async(req,res)=>{
-    const emailID=req.body.email;
-    try{
-      const user =await User.findOne({email:emailID})
-      if(!user){
-        res.status(404).send("user not found")
-      }else {
-        res.status(200).send(user)
-      }
-    }catch(err){
-        res.status(404).send("user not found")
-    }
-   
-    
-})
 app.post("/signup",async (req,res)=>{
-    const data=req.body;
-    const user =new User(data);
+    //validate signin data
+    
     try{
-        await user.save();
+      validateData(req);
+      const {firstName,lastName,email,password}=req.body;
+      const encryptedPassword=await bcrypt.hash(password,10);
+      const user =new User({
+        firstName,
+        lastName,
+        email,
+        password:encryptedPassword
+  
+      });
+      await user.save();
+      res.send("user created successfully")
     }catch(err){
 
         res.send("error in creating user:"+err.message)
     }
     
-    res.send("user created successfully")
+   
 })
-app.patch("/update/:userId",async (req,res)=>{
-  const id=req.params.userId;
-  const data=req.body;
+app.post("/login",async (req,res)=>{
+  //validation
   try{
-    const valid_updates=["firstName","lastName","age","gender"]
-    const isValidUpdate=Object.keys(data).every((k)=>{
-      return valid_updates.includes(k)
-    })
-    if(!isValidUpdate){
-      throw new Error("update not allowed")
+    const {email,password}=req.body;
+    const user=await User.findOne({email:email})
+    if(!user){
+      throw new Error("Invalid Credentials");
     }
-    const user=await User.findByIdAndUpdate({_id:id},  data, {
-      returnDocument:"after",
-      runValidators:true,
-    });
-    res.send("data updated successfully")
-  }catch(err){
-    res.send("Invalid Update:"+err.message)
-  }
-  
+    const isValidPassword=await user.isValidPassword(password);
+    if(isValidPassword){
+      const token=await user.getJWT();
+      res.cookie('token',token);
+      res.send("login successfull");
+    }
+    
+ }catch(err){
+   res.status(400).send("Error"+err.message);
+ }
 
 })
 
+app.get('/profile',userAuth,async (req,res)=>{
+  try{ 
+      const user=req.user;
+      res.send(user);  
+  }catch(err){
+    res.status(400).send("Error"+err.message)
+  }
+})
+app.post('/sendConnectionRequest',userAuth,async(req,res)=>{
+  try{
+    const user=req.user;
+    res.send("connection request send by"+user.firstName);
+  }catch(err){
+    res.send("ERROR:"+err.message);
+  }
+})
 connectDB()
   .then(() => {
     console.log("Database connection established...");
